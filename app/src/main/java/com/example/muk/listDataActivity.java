@@ -53,10 +53,14 @@ public class listDataActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         switch (i){
                             case 0:
-                                Toast.makeText(listDataActivity.this,"Anda memilih Lihat Data",Toast.LENGTH_LONG).show();
+                                Intent toDetailData = new Intent(listDataActivity.this,detailDataActivity.class);
+                                startActivity(toDetailData);
+                                finish();
                                 break;
                             case 1:
-                                Toast.makeText(listDataActivity.this,"Anda memilih Upgrade Data",Toast.LENGTH_LONG).show();
+                                Intent toUpgradeData = new Intent(listDataActivity.this,upgradeDataActivity.class);
+                                startActivity(toUpgradeData);
+                                finish();
                                 break;
                             case 2:
                                 Toast.makeText(listDataActivity.this,"Anda memilih Hapus Data",Toast.LENGTH_LONG).show();
