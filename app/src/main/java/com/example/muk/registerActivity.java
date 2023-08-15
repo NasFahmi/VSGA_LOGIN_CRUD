@@ -9,6 +9,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 public class registerActivity extends AppCompatActivity {
+    DBHelper db = new DBHelper(this);
     private EditText editTextEmailRegister;
     private EditText editTextPasswordRegister;
     private TextView linkToLogin;
@@ -30,6 +31,10 @@ public class registerActivity extends AppCompatActivity {
             finish();
         });
         btnRegister.setOnClickListener(view -> {
+            String Email = editTextEmailRegister.getText().toString();
+            String Passoword = editTextPasswordRegister.getText().toString();
+            db.register(Email,Passoword);
+
             Intent Register = new Intent(registerActivity.this, loginActivity.class);
             startActivity(Register);
             finish();

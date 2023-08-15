@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -13,15 +14,18 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class listDataActivity extends AppCompatActivity {
+    DBHelper db = new DBHelper(this);
     private ListView listItem;
     private ImageView backToDashboard;
-    private String[] listNama ={
-            "Nama 1","Nama 2"
-    };
-
+    private ArrayList<String> namaMahasiswaList = new ArrayList<>();
+    private ArrayList<String> idMahasiswaList = new ArrayList<>();
+    private FloatingActionButton fabInputData;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,6 +33,7 @@ public class listDataActivity extends AppCompatActivity {
 
         backToDashboard = (ImageView) findViewById(R.id.backToDashboard);
         listItem = (ListView) findViewById(R.id.listDataNama);
+        fabInputData = (FloatingActionButton) findViewById(R.id.fabInputData);
 
         //Intent
         backToDashboard.setOnClickListener(view -> {
@@ -36,14 +41,25 @@ public class listDataActivity extends AppCompatActivity {
             startActivity(backToDashboard);
             finish();
         });
+        fabInputData.setOnClickListener(view -> {
+            Intent toInputData = new Intent(listDataActivity.this, inputDataActivity.class);
+            startActivity(toInputData);
+            finish();
+        });
+        List<ModelDataMahasiswa> listDataMahasiswa= db.ListData();
+        for (ModelDataMahasiswa data : listDataMahasiswa) {
+            namaMahasiswaList.add(data.getNama());
+            idMahasiswaList.add(data.getId());
+        }
+
 
         //listView Adapter
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.list_item, listNama);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.list_item, namaMahasiswaList);
         listItem.setAdapter(adapter);
 
         listItem.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
             // Dialog
                 final AlertDialog.Builder builder = new AlertDialog.Builder(listDataActivity.this);
                 builder.setTitle("Pilihan");
@@ -54,16 +70,24 @@ public class listDataActivity extends AppCompatActivity {
                         switch (i){
                             case 0:
                                 Intent toDetailData = new Intent(listDataActivity.this,detailDataActivity.class);
+                                String idSelected = listDataMahasiswa.get(position).getId();
+                                toDetailData.putExtra("selectedId",idSelected);
+//                                Log.e("id yang teseleksi",idSelected);
                                 startActivity(toDetailData);
                                 finish();
                                 break;
                             case 1:
                                 Intent toUpgradeData = new Intent(listDataActivity.this,upgradeDataActivity.class);
+                                String idSelectedUpgrade = listDataMahasiswa.get(position).getId();
+                                toUpgradeData.putExtra("selectedId",idSelectedUpgrade);
                                 startActivity(toUpgradeData);
                                 finish();
                                 break;
                             case 2:
-                                Toast.makeText(listDataActivity.this,"Anda memilih Hapus Data",Toast.LENGTH_LONG).show();
+                                String idSelectedDelete = listDataMahasiswa.get(position).getId();
+                                db.deleteData(idSelectedDelete);
+                                refreshData();
+                                Toast.makeText(listDataActivity.this,"Item Telah Terhapus Hapus Data",Toast.LENGTH_LONG).show();
                                 break;
                         }
                     }
@@ -73,4 +97,18 @@ public class listDataActivity extends AppCompatActivity {
             }
         });
     }
+    private void refreshData() {
+        namaMahasiswaList.clear();
+        idMahasiswaList.clear();
+
+        List<ModelDataMahasiswa> listDataMahasiswa = db.ListData();
+        for (ModelDataMahasiswa data : listDataMahasiswa) {
+            namaMahasiswaList.add(data.getNama());
+            idMahasiswaList.add(data.getId());
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.list_item, namaMahasiswaList);
+        listItem.setAdapter(adapter);
+    }
+
 }

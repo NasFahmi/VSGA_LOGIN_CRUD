@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">MUK</string>
     <string name="descripstion_informasi">Aplikasi Ini Adalah Aplikasi Yang Digunakan Untuk Mendata Mahasiswa, User Dapat Melihat, Menambah, Mengupdate, Menghapus data Mahasiswa</string>
+    <string name="description_fab">input data</string>
 </resources>
